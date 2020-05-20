@@ -1,6 +1,6 @@
 {
   "name": "@wxti/restful",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "license": "ISC",
   "dependencies": {
@@ -12,5 +12,16 @@
     "mongoose": "^5.9.15"
   },
   "description": "Simple API Resful + Mongoose",
-  "author": "Elberte Agostinho <elberte@gmail.com>"
+  "author": "Elberte Agostinho <elberte@gmail.com>",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elberte/wxti-restful.git"
+  },
+  "bugs": {
+    "url": "https://github.com/elberte/wxti-restful/issues"
+  },
+  "homepage": "https://github.com/elberte/wxti-restful#readme"
 }
