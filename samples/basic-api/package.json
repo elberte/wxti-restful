@@ -1,0 +1,12 @@
+{
+  "name": "modelo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@wxti/restful": "^1.0.0"
+  },
+  "scripts": {
+    "dev": "nodemon app.js"
+  }
+}
