@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-module.exports = (app) => (base, uri) => {
+module.exports = (app, auth) => (base, uri) => {
   let model = mongoose.model(uri)
 
   function buildFilter(req) {
