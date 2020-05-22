@@ -100,7 +100,7 @@ module.exports = (app, auth) => (base, uri) => {
     }
   }
 
-  function populate({ populate, param }) {
+  function populate({ populate, param }, roles = []) {
     app.get(`${base}/${uri}/:id${param}`, async (req, res) => {
       try {
         const projection = buildProjection(req)
@@ -130,7 +130,7 @@ module.exports = (app, auth) => (base, uri) => {
     })
   }
 
-  async function route(method, param, callback) {
+  async function route(method, param, callback, roles = []) {
     switch(method) {
       case 'get':
         app.get(`${base}/${uri}${param}`, callback)

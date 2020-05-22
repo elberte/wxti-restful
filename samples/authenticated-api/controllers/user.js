@@ -22,7 +22,7 @@ module.exports = ({ restful, mongoose }) => {
     })
  
     restful.build({
-        remove: ['admin'],
+        remove: ['admin', 'guest'],
         update: ['admin'],
         create: ['admin']
     })

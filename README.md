@@ -138,3 +138,7 @@ module.exports = ({ restful }) => {
     restful.build()
 }
 ```
+
+### Funcionalizaddes futuras
+- Integração de comunicação real-time
+- Autenticação em chamadas populate e custom - modelo roles
