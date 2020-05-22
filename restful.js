@@ -101,7 +101,7 @@ module.exports = (app, auth) => (base, uri) => {
   }
 
   function populate({ populate, param }, roles = []) {
-    app.get(`${base}/${uri}/:id${param}`, async (req, res) => {
+    app.get(`${base}/${uri}/:id${param}`, auth.authorize(roles), async (req, res) => {
       try {
         const projection = buildProjection(req)
         let r = await model.findOne({ _id: req.params.id }, projection).populate(populate).lean()
@@ -133,19 +133,19 @@ module.exports = (app, auth) => (base, uri) => {
   async function route(method, param, callback, roles = []) {
     switch(method) {
       case 'get':
-        app.get(`${base}/${uri}${param}`, callback)
+        app.get(`${base}/${uri}${param}`, auth.authorize(roles), callback)
         break;
       case 'put':
-        app.put(`${base}/${uri}${param}`, callback)
+        app.put(`${base}/${uri}${param}`, auth.authorize(roles), callback)
         break;
       case 'post':
-        app.post(`${base}/${uri}${param}`, callback)
+        app.post(`${base}/${uri}${param}`, auth.authorize(roles), callback)
         break;
       case 'delete':
-        app.delete(`${base}/${uri}${param}`, callback)
+        app.delete(`${base}/${uri}${param}`, auth.authorize(roles), callback)
         break;
       case 'patch':
-        app.patch(`${base}/${uri}${param}`, callback)
+        app.patch(`${base}/${uri}${param}`, auth.authorize(roles), callback)
         break;
     }
   }
