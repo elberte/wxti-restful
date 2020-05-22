@@ -150,12 +150,12 @@ module.exports = (app, auth) => (base, uri) => {
     }
   }
 
-  function build () {
-    app.get(`${base}/${uri}`, find.bind(this))
-    app.put(`${base}/${uri}`, create.bind(this))
-    app.post(`${base}/${uri}/:id`, update.bind(this))
-    app.get(`${base}/${uri}/:id`, load.bind(this))
-    app.delete(`${base}/${uri}/:id`, remove.bind(this))
+  function build (roles) {
+    app.get(`${base}/${uri}`, auth.authorize(!!roles ? roles.find : []), find.bind(this))
+    app.put(`${base}/${uri}`, auth.authorize(!!roles ? roles.create : []), create.bind(this))
+    app.post(`${base}/${uri}/:id`, auth.authorize(!!roles ? roles.update : []), update.bind(this))
+    app.get(`${base}/${uri}/:id`, auth.authorize(!!roles ? roles.read : []), load.bind(this))
+    app.delete(`${base}/${uri}/:id`, auth.authorize(!!roles ? roles.remove : []), remove.bind(this))
   }
 
   return {
