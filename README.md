@@ -5,6 +5,41 @@
 yarn add @wxti/restful
 ```
 
+## Recursos
+- Modelo CRUD simplificado
+    - Rotas de listagem com paginação, ordenação, filtros e seleção de campos
+    - Rotas de listagem e leitura de registro com populate
+    - Rotas customizadas
+    
+- Autenticação
+    - Multiplas camadas de autenticação
+    - Autenticação sem envio de senha para backend (em andamento)
+    - Segurança do token - vinculo com socket.io ou ip da máquina (em andamento)
+    - Atualização de dados pelo dono do registro (em andamento)
+    - Troca de senha
+
+## Rotas crud padrão
+```
+{BASE_API}                          - Rota da API
+{ENTITY}                            - Nome da entidade de banco
+
+GET {BASE_API}/{ENTITY}             - Listagem de dados
+GET {BASE_API}/{ENTITY}/:id         - Carga de registro
+PUT {BASE_API}/{ENTITY}             - Inserção de registro
+POST {BASE_API}/{ENTITY}/:id        - Atualização de registro
+DELETE {BASE_API}/{ENTITY}          - Exclusão de registro
+```
+
+## Parametro de rota de listagem de dados
+```
+Os parametros são enviados no modelo de URL depois do caracter "?"
+
+skip                                - salta o numero de itens indicados
+limit                               - limita o numero de registros retornados
+sort                                - ordenação de dados -1 DESC e 1 ASC
+q                                   - filtragem segue o modelo do elasticsearch
+```
+
 ## Configurações de variáveis de ambiente (.env)
 ```
 MONGO_URL=mongodb://localhost/database
@@ -13,7 +48,7 @@ PORT=3000
 POST_LIMIT=5mb
 ```
 
-## Inicialização do módulo (app.js)
+## Exemplo de inicialização do módulo (app.js)
 ```js
 // rest core
 const app = require('@wxti/restful')
@@ -28,117 +63,10 @@ app.controllers(`controllers`)
 app.start()
 ```
 
-## Model (models/user.js)
-```js
-module.exports = (mongoose) => {
-    mongoose.model('user', {
-        firstName: {
-            type: String,
-            required: true
-        },
-        lastName: {
-            type: String,
-            required: true
-        },
-        posts: {
-            type: mongoose.Types.ObjectId,
-            ref: 'post'
-        }
-    })
-}
+# Exemplos de uso do módulo
+Na pasta samples existem exemplos de uso do módulo
+
 ```
-
-## Model (models/post.js)
-```js
-module.exports = (mongoose) => {
-    mongoose.model('post', {
-        content: {
-            type: String,
-            required: true
-        },
-        foto: {
-            type: String,
-            required: true
-        }
-    })
-}
+- samples/authenticated-api             - exemplo de API com autenticação
+- samples/public-api                    - exemplo de API pública
 ```
-
-## Controller (controllers/user.js) - restful customizado
-```js
-/**
- * Ativa modelo restful com dados da collection adicionando rotas customizadas
- * 
- * Rotas padrão
- * GET      - http://{server}/api/user?skip=10&limit=10&sort=-name,active   - lista de usuários (suporta filtros, ordenação e paginação)
- * GET      - http://{server}/api/user/:id                                  - único usuário (id)
- * GET      - http://{server}/api/user/count                                - contagem de registros (suporta filtros)
- * PUT      - http://{server}/api/user/:id                                  - novo usuário
- * POST     - http://{server}/api/user                                      - atualizar usuário
- * DELETE   - http://{server}/api/user/:id                                  - excluir usuário
- * 
- * Rotas customizadas
- * GET      - http://{server}/api/user/with-posts                           - rota montada pelo metodo populate
- * GET      - http://{server}/api/user/:id/with-posts                       - rota montada pelo metodo populate
- * GET      - http://{server}/api/user/with-simple-posts                    - rota montada pelo metodo populate
- * GET      - http://{server}/api/user/:id/with-simple-posts                - rota montada pelo metodo populate
- * GET      - http://{server}/api/user/:id/custom                           - rota montada pelo metodo route
- */
-module.exports = ({ restful, mongoose }) => {
-    const model = mongoose.model('user')
-
-    // rota com populate ativo
-    restful.populate({ populate: ['posts'], param: '/with-posts' })
-
-    // rota com populate customizado - populate segue modelo do mongoose
-    restful.populate({ populate: [{
-        path: 'posts',
-        select: 'content'
-    }], param: '/with-simple-posts' })
-
-    // rota customizada
-    restful.route('get', '/:id/custom', async (req, res) => {
-        try {
-            let registers = await model.find({ _id: req.params.id }).populate('posts')
-            res.json({ status: 'OK', result: registers })
-        }
-        catch (err) {
-            res.json({ status: 'FAIL', err: err.message })
-        }
-    })
-
-    restful.build()
-}
-```
-
-### Controller (controllers/post.js) - restful puro
-```js
-/**
- * Ativa modelo restful somente com dados da collection
- * 
- * Chamadas de listagem podem conter parametros
- * skip (numerico)  - salta um determinado numero de registros
- * limit (numerico) - limita um determinado numero de registros 
- * sort (array)     - ordena listagem
- * q (string)       - filtragem
- * fields (array)   - seleção de campos do select
- * 
- * GET      - http://{server}/api/post                                      - lista de posts
- * GET      - http://{server}/api/post?skip=10&limit=10&sort=-name,active   - lista de posts (suporte ordenação e paginação)
- * GET      - http://{server}/api/post?q=title[regex]:teste,active:true     - lista de posts (suporte filtros, regex)
- * GET      - http://{server}/api/post?fields=name,login                    - lista de posts (projection)
- * GET      - http://{server}/api/post/count - não implantado               - contagem de registros (suporta filtros)
- * GET      - http://{server}/api/post/:id                                  - post único (id)
- * GET      - http://{server}/api/post/:id/exists - não implantado          - checa se post existe
- * PUT      - http://{server}/api/post/:id                                  - novo post
- * POST     - http://{server}/api/post                                      - atualizar post
- * DELETE   - http://{server}/api/post/:id                                  - excluir post
- */
-module.exports = ({ restful }) => {
-    restful.build()
-}
-```
-
-### Funcionalizaddes futuras
-- Integração de comunicação real-time
-- Autenticação em chamadas populate e custom - modelo roles
