@@ -3,6 +3,7 @@ const express = require('express')
 const compression = require('compression')
 const cors = require('cors')
 const fs = require('fs')
+const helmet = require('helmet')
 
 // environment configuration
 require('dotenv').config()
@@ -15,6 +16,7 @@ module.exports = function() {
     const authentication = require('./auth')
     const restful = require('./restful')(app, authentication(app))
 
+    app.use(helmet())
     app.use(express.json({ limit: process.env.POST_LIMIT }))
     app.use(express.urlencoded({ extended: true, limit: process.env.POST_LIMIT }))
     app.use(compression())
