@@ -1,7 +1,6 @@
 const mongoose = require('mongoose')
 const express = require('express')
 const compression = require('compression')
-const bodyParser = require('body-parser')
 const cors = require('cors')
 const fs = require('fs')
 
@@ -16,8 +15,8 @@ module.exports = function() {
     const authentication = require('./auth')
     const restful = require('./restful')(app, authentication(app))
 
-    app.use(bodyParser.json({ limit: process.env.POST_LIMIT }))
-    app.use(bodyParser.urlencoded({ extended: true, limit: process.env.POST_LIMIT }))
+    app.use(express.json({ limit: process.env.POST_LIMIT }))
+    app.use(express.urlencoded({ extended: true, limit: process.env.POST_LIMIT }))
     app.use(compression())
     app.use(cors())
 
