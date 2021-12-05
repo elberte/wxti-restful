@@ -1,8 +1,8 @@
 {
   "name": "@wxti/restful",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "main": "index.js",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "bcrypt": "^5.0.1",
     "compression": "^1.7.4",
